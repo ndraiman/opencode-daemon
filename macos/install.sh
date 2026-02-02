@@ -33,7 +33,40 @@ if [[ ! -x "$HOME/.bun/bin/opencode" ]]; then
 fi
 
 mkdir -p "$(dirname "$PLIST_DST")"
-cp "$PLIST_SRC" "$PLIST_DST"
+
+# Generate plist with user-specific paths
+cat > "$PLIST_DST" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>$LABEL</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/bin/sh</string>
+      <string>-c</string>
+      <string>exec $HOME/.bun/bin/bun $HOME/.bun/bin/opencode serve --hostname 0.0.0.0 --port 4096</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>WorkingDirectory</key>
+    <string>$HOME</string>
+
+    <key>StandardOutPath</key>
+    <string>$HOME/Library/Logs/opencode-server.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>$HOME/Library/Logs/opencode-server.err.log</string>
+  </dict>
+</plist>
+EOF
 
 # reload
 launchctl unload "$PLIST_DST" >/dev/null 2>&1 || true
