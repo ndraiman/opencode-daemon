@@ -8,11 +8,8 @@
     <key>ProgramArguments</key>
     <array>
       <string>/bin/sh</string>
-      <string>-lc</string>
-      <string>
-        export OPENCODE_SERVER_PASSWORD="$(cat "$HOME/.config/opencode/credentials/server_password")";
-        exec "$HOME/.bun/bin/opencode" serve --hostname 0.0.0.0 --port 4096
-      </string>
+      <string>-c</string>
+      <string>exec /Users/netanel/.bun/bin/bun /Users/netanel/.bun/bin/opencode serve --hostname 0.0.0.0 --port 4096</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -22,12 +19,12 @@
     <true/>
 
     <key>WorkingDirectory</key>
-    <string>${HOME}</string>
+    <string>/Users/netanel</string>
 
     <key>StandardOutPath</key>
-    <string>${HOME}/Library/Logs/opencode-server.log</string>
+    <string>/Users/netanel/Library/Logs/opencode-server.log</string>
 
     <key>StandardErrorPath</key>
-    <string>${HOME}/Library/Logs/opencode-server.err.log</string>
+    <string>/Users/netanel/Library/Logs/opencode-server.err.log</string>
   </dict>
 </plist>
