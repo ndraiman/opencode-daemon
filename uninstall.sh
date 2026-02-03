@@ -4,6 +4,19 @@ set -euo pipefail
 # OpenCode Daemon Uninstaller
 # Self-contained - works with: curl -fsSL <url> | bash
 
+# Helper for interactive prompts - defaults to 'n' in non-interactive mode
+ask_yes_no() {
+  local prompt="$1"
+  if [[ -t 0 ]]; then
+    read -p "$prompt [y/N] " -n 1 -r
+    echo
+    [[ $REPLY =~ ^[Yy]$ ]]
+  else
+    echo "$prompt [y/N] n (non-interactive, skipping)"
+    return 1
+  fi
+}
+
 uninstall_macos() {
   LABEL="com.opencode.server"
   UPDATER_LABEL="com.opencode.updater"
@@ -25,16 +38,12 @@ uninstall_macos() {
     fi
   done
 
-  read -p "Remove password file? ($PASSFILE) [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  if ask_yes_no "Remove password file? ($PASSFILE)"; then
     rm -f "$PASSFILE"
     echo "Removed: $PASSFILE"
   fi
 
-  read -p "Remove log files? [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  if ask_yes_no "Remove log files?"; then
     rm -f "$HOME/Library/Logs/opencode-server.log" \
           "$HOME/Library/Logs/opencode-server.err.log" \
           "$HOME/Library/Logs/opencode-updater.log" \
@@ -72,16 +81,12 @@ uninstall_linux() {
 
   systemctl daemon-reload
 
-  read -p "Remove password directory? ($PASSDIR) [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  if ask_yes_no "Remove password directory? ($PASSDIR)"; then
     rm -rf "$PASSDIR"
     echo "Removed: $PASSDIR"
   fi
 
-  read -p "Remove opencode service user? [y/N] " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
+  if ask_yes_no "Remove opencode service user?"; then
     userdel opencode 2>/dev/null || true
     echo "Removed user: opencode"
   fi
