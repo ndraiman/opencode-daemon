@@ -25,6 +25,10 @@ ensure_password() {
     umask 077
     generate_password > "$passfile"
     chmod 600 "$passfile"
+    if [[ ! -s "$passfile" ]]; then
+      echo "ERROR: Failed to generate password" >&2
+      exit 1
+    fi
   fi
 }
 
