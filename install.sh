@@ -98,7 +98,7 @@ main() {
 
   local attempt=0
   while [[ $attempt -lt $MAX_RETRIES ]]; do
-    if check_idle; then break; fi
+    check_idle && break
     local ret=$?
     [[ $ret -eq 2 ]] && { log "Server not responding, proceeding"; break; }
     attempt=$((attempt + 1))
