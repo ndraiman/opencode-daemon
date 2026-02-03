@@ -1,4 +1,4 @@
-# opencode-always-on
+# opencode-daemon
 
 Keep **OpenCode Server** running 24/7 on your Mac or Linux machine.
 
@@ -18,10 +18,10 @@ bun install -g opencode
 **Install:**
 ```bash
 # macOS
-curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-daemon/main/install.sh | bash
 
 # Linux (requires sudo)
-curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-daemon/main/install.sh | sudo bash
 ```
 
 **Connect:** `http://<your-tailscale-or-wg-ip>:4096`
@@ -32,10 +32,10 @@ curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/in
 
 ```bash
 # macOS
-curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-daemon/main/uninstall.sh | bash
 
 # Linux
-curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/uninstall.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-daemon/main/uninstall.sh | sudo bash
 ```
 
 You'll be prompted to optionally remove password files and logs.
@@ -46,10 +46,10 @@ You'll be prompted to optionally remove password files and logs.
 
 ```bash
 # macOS
-curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/restart.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-daemon/main/restart.sh | bash
 
 # Linux
-curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/restart.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-daemon/main/restart.sh | sudo bash
 ```
 
 ---
