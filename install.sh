@@ -118,6 +118,13 @@ main() {
       log "Updated: $current -> $new"
       log "Restarting service..."
       restart_service
+      sleep 3
+      if curl -s --max-time 5 "http://$HOST:$PORT/health" >/dev/null 2>&1 || \
+         curl -s --max-time 5 "http://$HOST:$PORT/" >/dev/null 2>&1; then
+        log "Service restarted successfully"
+      else
+        log "WARNING: Service may not have started correctly"
+      fi
     else
       log "Already at latest: $current"
     fi
