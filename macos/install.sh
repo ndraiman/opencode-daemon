@@ -74,7 +74,55 @@ launchctl load "$PLIST_DST"
 launchctl kickstart -k "gui/$(id -u)/$LABEL" || true
 
 echo "Installed LaunchAgent: $PLIST_DST"
+
+UPDATER_LABEL="com.opencode.updater"
+UPDATER_PLIST_DST="$HOME/Library/LaunchAgents/$UPDATER_LABEL.plist"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts"
+SCRIPT_DST="$HOME/.local/bin/update-opencode.sh"
+
+mkdir -p "$(dirname "$SCRIPT_DST")"
+cp "$SCRIPT_DIR/update-opencode.sh" "$SCRIPT_DST"
+chmod +x "$SCRIPT_DST"
+
+cat > "$UPDATER_PLIST_DST" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>$UPDATER_LABEL</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/bin/bash</string>
+      <string>$SCRIPT_DST</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+      <key>Hour</key>
+      <integer>3</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>$HOME/Library/Logs/opencode-updater.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>$HOME/Library/Logs/opencode-updater.err.log</string>
+  </dict>
+</plist>
+EOF
+
+launchctl unload "$UPDATER_PLIST_DST" >/dev/null 2>&1 || true
+launchctl load "$UPDATER_PLIST_DST"
+
+echo "Installed Updater LaunchAgent: $UPDATER_PLIST_DST"
+echo ""
 echo "Logs:"
-echo "  $HOME/Library/Logs/opencode-server.log"
-echo "  $HOME/Library/Logs/opencode-server.err.log"
+echo "  Server: $HOME/Library/Logs/opencode-server.log"
+echo "  Updater: $HOME/Library/Logs/opencode-updater.log"
+echo ""
+echo "Auto-updates daily at 3am (waits for idle sessions)"
 echo "Connect via: http://<your-tailscale-or-wg-ip>:4096"

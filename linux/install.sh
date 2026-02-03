@@ -2,9 +2,11 @@
 set -euo pipefail
 
 # Installs:
-# - /etc/systemd/system/opencode.service
-# - password at /etc/opencode/server_password
-# - creates service user "opencode" if missing
+# - /etc/systemd/system/opencode.service (main server)
+# - /etc/systemd/system/opencode-updater.{service,timer} (auto-updater)
+# - /usr/local/bin/update-opencode.sh (updater script)
+# - /etc/opencode/server_password (auth credential)
+# - Creates service user "opencode" if missing
 
 SERVICE_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVICE_SRC="$SERVICE_SRC_DIR/opencode.service"
@@ -57,10 +59,30 @@ fi
 
 cp "$TMP_UNIT" "$SERVICE_DST"
 
+SCRIPT_SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/scripts"
+UPDATER_SERVICE_SRC="$SERVICE_SRC_DIR/opencode-updater.service"
+UPDATER_TIMER_SRC="$SERVICE_SRC_DIR/opencode-updater.timer"
+UPDATER_SCRIPT_DST="/usr/local/bin/update-opencode.sh"
+
+cp "$SCRIPT_SRC_DIR/update-opencode.sh" "$UPDATER_SCRIPT_DST"
+chmod +x "$UPDATER_SCRIPT_DST"
+
+cp "$UPDATER_SERVICE_SRC" /etc/systemd/system/opencode-updater.service
+cp "$UPDATER_TIMER_SRC" /etc/systemd/system/opencode-updater.timer
+
 systemctl daemon-reload
 systemctl enable --now opencode.service
+systemctl enable --now opencode-updater.timer
 systemctl status --no-pager opencode.service || true
 
-echo "Installed systemd unit: $SERVICE_DST"
-echo "Logs: journalctl -u opencode.service -f"
+echo ""
+echo "Installed systemd units:"
+echo "  Service: $SERVICE_DST"
+echo "  Updater: /etc/systemd/system/opencode-updater.{service,timer}"
+echo ""
+echo "Logs:"
+echo "  Server:  journalctl -u opencode.service -f"
+echo "  Updater: journalctl -u opencode-updater.service"
+echo ""
+echo "Auto-updates daily at 3am (waits for idle sessions)"
 echo "Connect via: http://<server-tailscale-or-wg-ip>:4096"

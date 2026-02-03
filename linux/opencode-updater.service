@@ -1,0 +1,11 @@
+[Unit]
+Description=OpenCode Auto-Updater
+After=network-online.target opencode.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/update-opencode.sh
+
+[Install]
+WantedBy=multi-user.target

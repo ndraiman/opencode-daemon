@@ -2,6 +2,9 @@
 set -euo pipefail
 
 SERVICE_DST="/etc/systemd/system/opencode.service"
+UPDATER_SERVICE="/etc/systemd/system/opencode-updater.service"
+UPDATER_TIMER="/etc/systemd/system/opencode-updater.timer"
+UPDATER_SCRIPT="/usr/local/bin/update-opencode.sh"
 PASSDIR="/etc/opencode"
 
 if [[ $EUID -ne 0 ]]; then
@@ -9,17 +12,25 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-echo "Stopping and disabling service..."
+echo "Stopping and disabling services..."
 systemctl stop opencode.service 2>/dev/null || true
 systemctl disable opencode.service 2>/dev/null || true
+systemctl stop opencode-updater.timer 2>/dev/null || true
+systemctl disable opencode-updater.timer 2>/dev/null || true
 
-if [[ -f "$SERVICE_DST" ]]; then
-  rm "$SERVICE_DST"
-  systemctl daemon-reload
-  echo "Removed: $SERVICE_DST"
-else
-  echo "Not found: $SERVICE_DST"
+for unit in "$SERVICE_DST" "$UPDATER_SERVICE" "$UPDATER_TIMER"; do
+  if [[ -f "$unit" ]]; then
+    rm "$unit"
+    echo "Removed: $unit"
+  fi
+done
+
+if [[ -f "$UPDATER_SCRIPT" ]]; then
+  rm "$UPDATER_SCRIPT"
+  echo "Removed: $UPDATER_SCRIPT"
 fi
+
+systemctl daemon-reload
 
 read -p "Remove password directory? ($PASSDIR) [y/N] " -n 1 -r
 echo

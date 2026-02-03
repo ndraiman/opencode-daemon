@@ -12,6 +12,7 @@ Designed for private access via **Tailscale/WireGuard/SSH**.
 ## Layout
 - `macos/` — launchd LaunchAgent plist + install script
 - `linux/` — systemd unit + install script
+- `scripts/` — shared update script
 
 ## Quick start
 
@@ -23,6 +24,27 @@ Designed for private access via **Tailscale/WireGuard/SSH**.
 ### Linux
 ```bash
 sudo ./linux/install.sh
+```
+
+## Auto-Updates
+
+The install scripts set up automatic updates that:
+- Run daily at 3am
+- Check if any OpenCode sessions are active via `/session/status` API
+- Wait up to 1 hour (retrying every 5 min) if sessions are busy
+- Update only when idle, then restart the service
+
+**Logs:**
+- macOS: `~/Library/Logs/opencode-updater.log`
+- Linux: `journalctl -u opencode-updater.service`
+
+**Manual trigger:**
+```bash
+# macOS
+~/.local/bin/update-opencode.sh
+
+# Linux
+sudo /usr/local/bin/update-opencode.sh
 ```
 
 ## Notes
