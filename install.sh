@@ -4,6 +4,27 @@ set -euo pipefail
 # OpenCode Daemon Installer
 # Self-contained - works with: curl -fsSL <url> | bash
 
+generate_password() {
+  if command -v openssl >/dev/null 2>&1; then
+    openssl rand -base64 32
+  else
+    python3 -c "import secrets,base64; print(base64.b64encode(secrets.token_bytes(32)).decode())"
+  fi
+}
+
+ensure_password() {
+  local passfile="$1"
+  mkdir -p "$(dirname "$passfile")"
+  if [[ -f "$passfile" ]]; then
+    echo "Password already exists at: $passfile"
+  else
+    echo "Creating password at: $passfile"
+    umask 077
+    generate_password > "$passfile"
+    chmod 600 "$passfile"
+  fi
+}
+
 write_updater_script() {
   local dst="$1"
   cat > "$dst" <<'UPDATER_EOF'
@@ -115,20 +136,7 @@ install_macos() {
   UPDATER_PLIST_DST="$HOME/Library/LaunchAgents/$UPDATER_LABEL.plist"
   SCRIPT_DST="$HOME/.local/bin/update-opencode.sh"
 
-  # Create password
-  mkdir -p "$(dirname "$PASSFILE")"
-  if [[ ! -f "$PASSFILE" ]]; then
-    echo "Creating password at: $PASSFILE"
-    umask 077
-    if command -v openssl >/dev/null 2>&1; then
-      openssl rand -base64 32 > "$PASSFILE"
-    else
-      python3 -c "import secrets,base64; print(base64.b64encode(secrets.token_bytes(32)).decode())" > "$PASSFILE"
-    fi
-    chmod 600 "$PASSFILE"
-  else
-    echo "Password already exists at: $PASSFILE"
-  fi
+  ensure_password "$PASSFILE"
 
   # Check opencode exists
   if [[ ! -x "$HOME/.bun/bin/opencode" ]]; then
@@ -290,22 +298,9 @@ install_linux() {
     fi
   fi
 
-  # Create password
   mkdir -p "$PASSDIR"
   chmod 700 "$PASSDIR"
-
-  if [[ ! -f "$PASSFILE" ]]; then
-    echo "Creating password at: $PASSFILE"
-    umask 077
-    if command -v openssl >/dev/null 2>&1; then
-      openssl rand -base64 32 > "$PASSFILE"
-    else
-      python3 -c "import secrets,base64; print(base64.b64encode(secrets.token_bytes(32)).decode())" > "$PASSFILE"
-    fi
-    chmod 600 "$PASSFILE"
-  else
-    echo "Password already exists at: $PASSFILE"
-  fi
+  ensure_password "$PASSFILE"
 
   # Hardening settings
   if [[ "$SERVICE_USER" == "root" ]]; then

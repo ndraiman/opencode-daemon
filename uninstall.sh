@@ -18,17 +18,12 @@ uninstall_macos() {
   launchctl unload "$UPDATER_PLIST_DST" 2>/dev/null || true
   launchctl bootout "gui/$(id -u)/$UPDATER_LABEL" 2>/dev/null || true
 
-  for plist in "$PLIST_DST" "$UPDATER_PLIST_DST"; do
-    if [[ -f "$plist" ]]; then
-      rm "$plist"
-      echo "Removed: $plist"
+  for f in "$PLIST_DST" "$UPDATER_PLIST_DST" "$SCRIPT_DST"; do
+    if [[ -f "$f" ]]; then
+      rm "$f"
+      echo "Removed: $f"
     fi
   done
-
-  if [[ -f "$SCRIPT_DST" ]]; then
-    rm "$SCRIPT_DST"
-    echo "Removed: $SCRIPT_DST"
-  fi
 
   read -p "Remove password file? ($PASSFILE) [y/N] " -n 1 -r
   echo
@@ -68,17 +63,12 @@ uninstall_linux() {
   systemctl stop opencode-updater.timer 2>/dev/null || true
   systemctl disable opencode-updater.timer 2>/dev/null || true
 
-  for unit in "$SERVICE_DST" "$UPDATER_SERVICE" "$UPDATER_TIMER"; do
-    if [[ -f "$unit" ]]; then
-      rm "$unit"
-      echo "Removed: $unit"
+  for f in "$SERVICE_DST" "$UPDATER_SERVICE" "$UPDATER_TIMER" "$UPDATER_SCRIPT"; do
+    if [[ -f "$f" ]]; then
+      rm "$f"
+      echo "Removed: $f"
     fi
   done
-
-  if [[ -f "$UPDATER_SCRIPT" ]]; then
-    rm "$UPDATER_SCRIPT"
-    echo "Removed: $UPDATER_SCRIPT"
-  fi
 
   systemctl daemon-reload
 
