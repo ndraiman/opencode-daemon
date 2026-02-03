@@ -89,12 +89,17 @@ Default: `0.0.0.0:4096` (suitable for private networks).
 
 For localhost-only access, edit the plist/service file to use `127.0.0.1` and connect via SSH tunnel.
 
-### Updater Environment Variables
+### Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `OPENCODE_PORT` | `4096` | Server port for idle check |
-| `OPENCODE_HOST` | `127.0.0.1` | Server host for idle check |
+| `OPENCODE_PORT` | `4096` | Server port (set at install time and used by updater) |
+| `OPENCODE_HOST` | `127.0.0.1` | Server host for updater idle check |
+
+**Custom port example:**
+```bash
+OPENCODE_PORT=8080 curl -fsSL .../install.sh | bash
+```
 
 ---
 
@@ -149,7 +154,7 @@ which opencode
    systemctl status opencode.service
    ```
 
-2. Check firewall allows port 4096
+2. Check firewall allows port 4096 (or custom `OPENCODE_PORT`)
 
 3. Ensure you're connecting via Tailscale/WireGuard IP, not public IP
 
