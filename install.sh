@@ -62,7 +62,7 @@ restart_service() {
 AUTH_HEADER=""
 if [[ -f "$PASSFILE" ]]; then
   PASS=$(cat "$PASSFILE")
-  AUTH_HEADER="Authorization: Basic $(echo -n "opencode:$PASS" | base64)"
+  AUTH_HEADER="Authorization: Basic $(echo -n "opencode:$PASS" | base64 | tr -d '\n')"
 fi
 
 check_idle() {
