@@ -4,6 +4,9 @@ set -euo pipefail
 # OpenCode Daemon Installer
 # Self-contained - works with: curl -fsSL <url> | bash
 
+# Configuration (override via environment)
+OPENCODE_PORT="${OPENCODE_PORT:-4096}"
+
 generate_password() {
   if command -v openssl >/dev/null 2>&1; then
     openssl rand -base64 32
@@ -160,7 +163,7 @@ install_macos() {
     <array>
       <string>/bin/sh</string>
       <string>-c</string>
-      <string>export OPENCODE_SERVER_PASSWORD="\$(cat $PASSFILE)"; exec $HOME/.bun/bin/bun $HOME/.bun/bin/opencode serve --hostname 0.0.0.0 --port 4096</string>
+      <string>export OPENCODE_SERVER_PASSWORD="\$(cat "$PASSFILE")"; exec $HOME/.bun/bin/bun $HOME/.bun/bin/opencode serve --hostname 0.0.0.0 --port $OPENCODE_PORT</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -236,7 +239,7 @@ EOF
   echo "  Updater: $HOME/Library/Logs/opencode-updater.log"
   echo ""
   echo "Auto-updates daily at 3am (waits for idle sessions)"
-  echo "Connect via: http://<your-tailscale-or-wg-ip>:4096"
+  echo "Connect via: http://<your-tailscale-or-wg-ip>:$OPENCODE_PORT"
 }
 
 install_linux() {
@@ -328,7 +331,7 @@ WorkingDirectory=$SERVICE_HOME
 
 LoadCredential=opencode_password:/etc/opencode/server_password
 
-ExecStart=/bin/sh -lc 'export OPENCODE_SERVER_PASSWORD="\$(cat "\$CREDENTIALS_DIRECTORY/opencode_password")"; exec $OPENCODE_BIN serve --hostname 0.0.0.0 --port 4096'
+ExecStart=/bin/sh -lc 'export OPENCODE_SERVER_PASSWORD="\$(cat "\$CREDENTIALS_DIRECTORY/opencode_password")"; exec $OPENCODE_BIN serve --hostname 0.0.0.0 --port $OPENCODE_PORT'
 
 Restart=on-failure
 RestartSec=2
@@ -392,7 +395,7 @@ EOF
   echo "  Updater: journalctl -u opencode-updater.service"
   echo ""
   echo "Auto-updates daily at 3am (waits for idle sessions)"
-  echo "Connect via: http://<server-tailscale-or-wg-ip>:4096"
+  echo "Connect via: http://<server-tailscale-or-wg-ip>:$OPENCODE_PORT"
 }
 
 # Main entry point
