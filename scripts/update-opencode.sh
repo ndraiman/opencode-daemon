@@ -15,21 +15,22 @@ case "$(uname -s)" in
   Darwin)
     PASSFILE="$HOME/.config/opencode/credentials/server_password"
     RESTART_CMD="launchctl kickstart -k gui/$(id -u)/com.opencode.server"
-    UPDATE_CMD="$HOME/.bun/bin/bun update -g opencode-ai"
     ;;
   Linux)
     PASSFILE="/etc/opencode/server_password"
     RESTART_CMD="systemctl restart opencode.service"
-    UPDATE_CMD="bun update -g opencode-ai"
-    if ! command -v bun &>/dev/null; then
-      UPDATE_CMD="npm update -g opencode-ai"
-    fi
     ;;
   *)
     echo "Unsupported OS: $(uname -s)" >&2
     exit 1
     ;;
 esac
+
+OPENCODE_BIN=$(command -v opencode 2>/dev/null || echo "$HOME/.bun/bin/opencode")
+# Pipe 'y' for non-interactive upgrade confirmation.
+# opencode uses @clack/prompts which handles 'y'/'n' as yes/no shortcuts even when stdin is piped.
+# See: https://github.com/bombshell-dev/clack/blob/main/packages/core/src/prompts/prompt.ts
+UPDATE_CMD="echo y | $OPENCODE_BIN upgrade"
 
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
@@ -90,8 +91,8 @@ check_idle() {
 
 # Get current installed version
 get_current_version() {
-  if command -v opencode &>/dev/null; then
-    opencode --version 2>/dev/null | head -1 || echo "unknown"
+  if [[ -x "$OPENCODE_BIN" ]]; then
+    "$OPENCODE_BIN" --version 2>/dev/null | head -1 || echo "unknown"
   else
     echo "not-installed"
   fi
