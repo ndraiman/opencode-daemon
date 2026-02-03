@@ -74,6 +74,12 @@ sudo /usr/local/bin/update-opencode.sh
 
 ## Configuration
 
+### Authentication
+
+Uses [HTTP Basic Auth](https://opencode.ai/docs/server/) with:
+- **Username:** `opencode` (default, see [server docs](https://opencode.ai/docs/server/))
+- **Password:** auto-generated on install (stored in files below)
+
 ### Password Files
 
 Generated automatically on first install (chmod 600):
