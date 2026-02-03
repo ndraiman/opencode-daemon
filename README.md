@@ -8,66 +8,35 @@ Inspired by [thdxr's post](https://x.com/thdxr/status/2017691649384620057).
 
 ---
 
-## Table of Contents
+## Quick Start
 
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Uninstall](#uninstall)
-- [Restart](#restart)
-- [Auto-Updates](#auto-updates)
-- [Configuration](#configuration)
-- [Logs](#logs)
-- [Project Layout](#project-layout)
-- [Troubleshooting](#troubleshooting)
-
----
-
-## Prerequisites
-
-Install OpenCode before running the install script:
-
+**Prerequisites:** Install OpenCode first:
 ```bash
 bun install -g opencode
 ```
 
-Verify installation:
+**Install:**
 ```bash
-opencode --version
+# macOS
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/install.sh | bash
+
+# Linux (requires sudo)
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/install.sh | sudo bash
 ```
 
----
-
-## Quick Start
-
-The universal installer auto-detects your OS:
-
-```bash
-./install.sh
-```
-
-Or use platform-specific scripts directly:
-
-| Platform | Command |
-|----------|---------|
-| macOS    | `./macos/install.sh` |
-| Linux    | `sudo ./linux/install.sh` |
-
-After install, connect via: `http://<your-tailscale-or-wg-ip>:4096`
+**Connect:** `http://<your-tailscale-or-wg-ip>:4096`
 
 ---
 
 ## Uninstall
 
 ```bash
-./uninstall.sh
+# macOS
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/uninstall.sh | bash
+
+# Linux
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/uninstall.sh | sudo bash
 ```
-
-Or platform-specific:
-
-| Platform | Command |
-|----------|---------|
-| macOS    | `./macos/uninstall.sh` |
-| Linux    | `sudo ./linux/uninstall.sh` |
 
 You'll be prompted to optionally remove password files and logs.
 
@@ -76,29 +45,23 @@ You'll be prompted to optionally remove password files and logs.
 ## Restart
 
 ```bash
-./restart.sh
+# macOS
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/restart.sh | bash
+
+# Linux
+curl -fsSL https://raw.githubusercontent.com/ndraiman/opencode-always-on/main/restart.sh | sudo bash
 ```
-
-Or platform-specific:
-
-| Platform | Command |
-|----------|---------|
-| macOS    | `./macos/restart.sh` |
-| Linux    | `sudo ./linux/restart.sh` |
 
 ---
 
 ## Auto-Updates
 
-The install scripts set up automatic updates that:
-
-- Run daily at 3am
+Automatic updates run daily at 3am:
 - Check if sessions are active via `/session/status` API
 - Wait up to 1 hour (retrying every 5 min) if busy
 - Update only when idle, then restart the service
 
 **Manual trigger:**
-
 ```bash
 # macOS
 ~/.local/bin/update-opencode.sh
@@ -154,29 +117,6 @@ For localhost-only access, edit the plist/service file to use `127.0.0.1` and co
 
 ---
 
-## Project Layout
-
-```
-.
-├── install.sh          # Universal installer (auto-detects OS)
-├── uninstall.sh        # Universal uninstaller
-├── restart.sh          # Universal restart
-├── macos/
-│   ├── install.sh      # macOS LaunchAgent setup
-│   ├── uninstall.sh    # macOS cleanup
-│   └── restart.sh      # macOS service restart
-├── linux/
-│   ├── install.sh      # systemd service setup
-│   ├── uninstall.sh    # Linux cleanup
-│   ├── restart.sh      # Linux service restart
-│   ├── opencode-updater.service
-│   └── opencode-updater.timer
-└── scripts/
-    └── update-opencode.sh  # Shared auto-updater script
-```
-
----
-
 ## Troubleshooting
 
 ### Service not starting
@@ -204,7 +144,7 @@ which opencode
    ```bash
    # macOS
    launchctl list | grep opencode
-   
+
    # Linux
    systemctl status opencode.service
    ```

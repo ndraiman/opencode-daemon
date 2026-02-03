@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# OpenCode Always-On Restart
+# Self-contained - works with: curl -fsSL <url> | bash
 
 case "$(uname -s)" in
   Darwin)
-    echo "Detected: macOS"
-    exec "$SCRIPT_DIR/macos/restart.sh" "$@"
+    launchctl kickstart -k "gui/$(id -u)/com.opencode.server"
+    echo "Restarted com.opencode.server"
     ;;
   Linux)
-    echo "Detected: Linux"
-    exec "$SCRIPT_DIR/linux/restart.sh" "$@"
+    if [[ $EUID -ne 0 ]]; then
+      echo "ERROR: run as root (sudo)." >&2
+      exit 1
+    fi
+    systemctl restart opencode.service
+    echo "Restarted opencode.service"
     ;;
   *)
     echo "Unsupported platform: $(uname -s)" >&2
