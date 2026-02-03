@@ -1,8 +1,8 @@
-# opencode-persistent
+# opencode-always-on
 
-Run **OpenCode Server** persistently on macOS (launchd) and Linux (systemd).
+Keep **OpenCode Server** running 24/7 on your Mac or Linux machine.
 
-Designed for private access via **Tailscale/WireGuard/SSH**.
+Access it remotely from anywhere via **Tailscale**, **WireGuard**, or **SSH**.
 
 Inspired by [thdxr's post](https://x.com/thdxr/status/2017691649384620057).
 
