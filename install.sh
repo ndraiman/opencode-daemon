@@ -39,24 +39,25 @@ MAX_RETRIES=12
 RETRY_INTERVAL=300
 
 case "$(uname -s)" in
-  Darwin)
-    PASSFILE="$HOME/.config/opencode/credentials/server_password"
-    RESTART_CMD="launchctl kickstart -k gui/$(id -u)/com.opencode.server"
-    ;;
-  Linux)
-    PASSFILE="/etc/opencode/server_password"
-    RESTART_CMD="systemctl restart opencode.service"
-    ;;
-  *)
-    echo "Unsupported OS: $(uname -s)" >&2
-    exit 1
-    ;;
+  Darwin) PASSFILE="$HOME/.config/opencode/credentials/server_password" ;;
+  Linux)  PASSFILE="/etc/opencode/server_password" ;;
+  *)      echo "Unsupported OS: $(uname -s)" >&2; exit 1 ;;
 esac
 
 OPENCODE_BIN=$(command -v opencode 2>/dev/null || echo "$HOME/.bun/bin/opencode")
-UPDATE_CMD="echo y | $OPENCODE_BIN upgrade"
 
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
+
+run_update() {
+  echo y | "$OPENCODE_BIN" upgrade
+}
+
+restart_service() {
+  case "$(uname -s)" in
+    Darwin) launchctl kickstart -k "gui/$(id -u)/com.opencode.server" ;;
+    Linux)  systemctl restart opencode.service ;;
+  esac
+}
 
 AUTH_HEADER=""
 if [[ -f "$PASSFILE" ]]; then
@@ -107,13 +108,13 @@ main() {
 
   [[ $attempt -ge $MAX_RETRIES ]] && { log "Max retries, skipping update"; exit 0; }
 
-  log "Running update: $UPDATE_CMD"
-  if eval "$UPDATE_CMD"; then
+  log "Running update..."
+  if run_update; then
     local new=$(get_version)
     if [[ "$new" != "$current" ]]; then
       log "Updated: $current -> $new"
-      log "Restarting: $RESTART_CMD"
-      eval "$RESTART_CMD"
+      log "Restarting service..."
+      restart_service
     else
       log "Already at latest: $current"
     fi
