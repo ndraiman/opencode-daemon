@@ -169,8 +169,8 @@ For localhost-only access, edit the plist/service file to use `127.0.0.1` and co
 │   ├── install.sh      # systemd service setup
 │   ├── uninstall.sh    # Linux cleanup
 │   ├── restart.sh      # Linux service restart
-│   ├── opencode.service
-│   └── opencode-updater.service
+│   ├── opencode-updater.service
+│   └── opencode-updater.timer
 └── scripts/
     └── update-opencode.sh  # Shared auto-updater script
 ```
