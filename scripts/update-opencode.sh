@@ -39,7 +39,7 @@ log() {
 AUTH_HEADER=""
 if [[ -f "$PASSFILE" ]]; then
   PASS=$(cat "$PASSFILE")
-  AUTH_HEADER="Authorization: Basic $(echo -n ":$PASS" | base64)"
+  AUTH_HEADER="Authorization: Basic $(echo -n "opencode:$PASS" | base64)"
 fi
 
 # Check if any sessions are active

@@ -47,7 +47,7 @@ cat > "$PLIST_DST" <<EOF
     <array>
       <string>/bin/sh</string>
       <string>-c</string>
-      <string>exec $HOME/.bun/bin/bun $HOME/.bun/bin/opencode serve --hostname 0.0.0.0 --port 4096</string>
+      <string>export OPENCODE_SERVER_PASSWORD="\$(cat $PASSFILE)"; exec $HOME/.bun/bin/bun $HOME/.bun/bin/opencode serve --hostname 0.0.0.0 --port 4096</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -119,6 +119,8 @@ launchctl unload "$UPDATER_PLIST_DST" >/dev/null 2>&1 || true
 launchctl load "$UPDATER_PLIST_DST"
 
 echo "Installed Updater LaunchAgent: $UPDATER_PLIST_DST"
+echo ""
+echo "Password: $PASSFILE"
 echo ""
 echo "Logs:"
 echo "  Server: $HOME/Library/Logs/opencode-server.log"
