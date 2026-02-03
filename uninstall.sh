@@ -40,6 +40,8 @@ uninstall_macos() {
 
   if ask_yes_no "Remove password file? ($PASSFILE)"; then
     rm -f "$PASSFILE"
+    rmdir "$HOME/.config/opencode/credentials" 2>/dev/null || true
+    rmdir "$HOME/.config/opencode" 2>/dev/null || true
     echo "Removed: $PASSFILE"
   fi
 
