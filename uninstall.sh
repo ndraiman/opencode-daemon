@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# OpenCode Always-On Uninstaller
+# OpenCode Daemon Uninstaller
 # Self-contained - works with: curl -fsSL <url> | bash
 
 uninstall_macos() {

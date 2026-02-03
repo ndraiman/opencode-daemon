@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# OpenCode Always-On Restart
+# OpenCode Daemon Restart
 # Self-contained - works with: curl -fsSL <url> | bash
 
 case "$(uname -s)" in

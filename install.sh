@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# OpenCode Always-On Installer
+# OpenCode Daemon Installer
 # Self-contained - works with: curl -fsSL <url> | bash
 
 write_updater_script() {
